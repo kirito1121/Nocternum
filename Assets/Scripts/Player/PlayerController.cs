@@ -3,19 +3,20 @@
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D body;
-    [SerializeField] private float moveForce = 3f; // Speed of the player
-    [SerializeField] private float jumpForce = 7f; // Jump force of the player
+    private float moveForce = 3f; // Speed of the player
+    private float jumpForce = 10f; // Jump force of the player
     private bool isGrounded; // Cần kiểm tra va chạm với mặt đất
     private Animator animator; // Biến để lưu Animator nếu cần sử dụng
+    private float moveHorizontal; // Biến để lưu giá trị di chuyển ngang
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        body.gravityScale = 3f; // Đặt trọng lực cho Rigidbody2D
+        body.gravityScale = 1f; ; // Đặt trọng lực cho Rigidbody2D
     }
     private void Update()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
+        moveHorizontal = Input.GetAxis("Horizontal");
         // Chỉ thay đổi vận tốc X, giữ nguyên vận tốc Y
         body.linearVelocity = new Vector2(moveHorizontal * moveForce, body.linearVelocity.y);
 
@@ -25,10 +26,17 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(-1, 1, 1);
 
         if (Input.GetKeyDown(KeyCode.Space))
+        {
+            body.gravityScale = 2.5f;
             Jump();
+        }
+            
 
         animator.SetBool("run", moveHorizontal != 0);
         animator.SetBool("isGrounded", isGrounded);
+        //anim khi rơi
+        animator.SetBool("isFalling", !isGrounded && body.linearVelocity.y < 0);
+
     }
 
     private void Jump()
@@ -59,5 +67,10 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
             Debug.Log("Player is grounded: " + isGrounded);
         }
+    }
+
+    public bool canAttack()
+    {
+        return isGrounded;
     }
 }
