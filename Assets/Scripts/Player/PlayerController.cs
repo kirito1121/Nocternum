@@ -71,6 +71,6 @@ public class PlayerController : MonoBehaviour
 
     public bool canAttack()
     {
-        return isGrounded;
+        return moveHorizontal == 0 && isGrounded;
     }
 }
